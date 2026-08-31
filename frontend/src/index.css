@@ -1,0 +1,1301 @@
+/* ============ Design Tokens ============ */
+:root {
+  --bg: #07070f;
+  --bg-soft: #0d0d1c;
+  --panel: rgba(17, 17, 32, 0.78);
+  --panel-2: rgba(28, 28, 50, 0.6);
+  --panel-3: rgba(8, 8, 18, 0.55);
+  --panel-solid: #12121f;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #f2f2fa;
+  --muted: #8f8fa8;
+  --accent: #7c5cff;
+  --accent-2: #00e0b8;
+  --accent-3: #ff4d8d;
+  --gold: #ffd166;
+  --gold-bright: #ffe3a3;
+  --green: #3ddc97;
+  --red: #ff5d6c;
+  --orange: #ff9f43;
+  --panel-hot: #221a13;
+  --purple: #b983ff;
+  --blue: #4cc9f0;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glow-accent: 0 0 24px rgba(124, 92, 255, 0.35);
+  --glow-gold: 0 0 24px rgba(255, 209, 102, 0.3);
+  /* App.css aliases */
+  --text-dim: var(--muted);
+  --danger: var(--red);
+  --on-gold: #1a1205;
+  --sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+[data-theme="light"] {
+  --bg: #eef0f8;
+  --bg-soft: #e4e7f4;
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-2: rgba(255, 255, 255, 0.65);
+  --panel-3: rgba(15, 17, 40, 0.08);
+  --panel-solid: #ffffff;
+  --border: rgba(15, 15, 40, 0.09);
+  --border-strong: rgba(15, 15, 40, 0.18);
+  --text: #16162a;
+  --muted: #5d5d78;
+  --accent: #6a4dff;
+  --accent-2: #00b894;
+  --accent-3: #e8367c;
+  --gold: #e8a90c;
+  --gold-bright: #f5c445;
+  --green: #0da96e;
+  --red: #e5384a;
+  --orange: #ef7d1a;
+  --panel-hot: #fff6ec;
+  --purple: #9254e8;
+  --blue: #1d9bd1;
+  --shadow: 0 8px 28px rgba(30, 30, 70, 0.14);
+  --glow-accent: 0 0 20px rgba(106, 77, 255, 0.22);
+  --glow-gold: 0 0 20px rgba(232, 169, 12, 0.25);
+  /* App.css aliases */
+  --text-dim: var(--muted);
+  --danger: var(--red);
+  --on-gold: #3a2a05;
+}
+
+/* ============ Base ============ */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Subtle animated aurora background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(52% 38% at 12% 0%, rgba(124, 92, 255, 0.16), transparent 70%),
+    radial-gradient(44% 34% at 92% 8%, rgba(0, 224, 184, 0.1), transparent 70%),
+    radial-gradient(56% 46% at 50% 110%, rgba(255, 77, 141, 0.09), transparent 70%);
+  pointer-events: none;
+}
+[data-theme="light"] body::before {
+  background:
+    radial-gradient(52% 38% at 12% 0%, rgba(106, 77, 255, 0.1), transparent 70%),
+    radial-gradient(44% 34% at 92% 8%, rgba(0, 184, 148, 0.08), transparent 70%),
+    radial-gradient(56% 46% at 50% 110%, rgba(232, 54, 124, 0.07), transparent 70%);
+}
+
+button { font-family: inherit; cursor: pointer; }
+code { font-family: var(--mono); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ============ App Shell — HUD layout ============ */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--muted);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+/* ============ TopBar (slim) ============ */
+.topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 54px;
+  padding: 0 12px;
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 40;
+}
+
+.brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.brand-logo { display: grid; place-items: center; }
+/* Transparent-background PNG logo — no drop-shadow (it would smear a halo behind the 3D cube).
+   Sized via CSS for crisp mobile scaling; overflow hidden clips any edge vignette. */
+.brand-logo-img { width: 42px; height: 42px; object-fit: contain; }
+.brand-name {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.brand-name em { font-style: normal; color: var(--accent); }
+
+.topbar-center { display: flex; justify-content: center; min-width: 0; }
+
+.token-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: var(--text);
+  font-size: 12.5px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.token-pill:hover { border-color: var(--accent); box-shadow: var(--glow-accent); }
+.token-pill .token-label { font-weight: 700; color: var(--accent); }
+.token-pill code { color: var(--muted); font-size: 11.5px; }
+.token-pill .copy-hint { color: var(--muted); font-size: 12px; }
+.token-pill .copy-hint.on { color: var(--green); }
+.token-pill.pending { color: var(--muted); cursor: default; font-size: 11.5px; }
+.token-pill .pending-short { display: none; }
+
+.topbar-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+.per-px {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+  padding-right: 2px;
+}
+.per-px-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.per-px-val { font-size: 13.5px; font-weight: 700; color: var(--accent-2); font-family: var(--mono); }
+.per-px-sol { font-size: 9.5px; color: var(--muted); font-family: var(--mono); }
+
+/* ============ Jackpot Bar ============ */
+.jackpot-bar {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  z-index: 35;
+}
+.jackpot-bar::-webkit-scrollbar { display: none; }
+
+.jackpot {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  min-width: 236px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.jp-icon { font-size: 26px; line-height: 1; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4)); }
+
+.jp-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.jp-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.jp-name {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.jp-big .jp-name { color: var(--gold); }
+.jp-mid .jp-name { color: var(--purple); }
+.jp-small .jp-name { color: var(--blue); }
+
+.jp-amount { display: flex; align-items: baseline; gap: 6px; }
+.jp-sol { font-family: var(--mono); font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.jp-sol small { font-size: 11px; color: var(--muted); font-weight: 600; }
+.jp-usd { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+
+.jp-cost { display: flex; gap: 3px; font-size: 12.5px; line-height: 1; }
+.slot { opacity: 0.22; filter: grayscale(1); transition: opacity 0.2s, filter 0.2s; }
+.slot.filled { opacity: 1; filter: none; }
+
+.jp-claim {
+  flex: 0 0 auto;
+  background: var(--panel-2);
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 10px 14px;
+  border-radius: 11px;
+  transition: all 0.15s;
+}
+.jp-claim:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Claim ready — spinning gold border + live button */
+.jackpot.ready { border-color: transparent; }
+.jackpot.ready::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: conic-gradient(from var(--angle, 0deg), var(--gold), transparent 30%, var(--gold) 50%, transparent 80%, var(--gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 3s linear infinite;
+  pointer-events: none;
+}
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes spin-border { to { --angle: 360deg; } }
+.jackpot.ready .jp-claim {
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  border: none;
+  color: #1a1205;
+  box-shadow: var(--glow-gold);
+  opacity: 1;
+}
+.jackpot.ready .jp-claim:not(:disabled):hover { transform: translateY(-1px); }
+
+/* ============ Stage (canvas full-bleed) ============ */
+.stage-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  /* Promote the WebGL canvas onto its own compositor layer so backdrop-filter docks
+     (feed/leaderboard) that re-raster over it at scroll can composite instead of
+     forcing the canvas into the same layer — removes most of the scroll-time jank. */
+  will-change: transform;
+}
+
+.stage { position: absolute; inset: 0; }
+
+/* Board status chip — floats over the canvas */
+.board-chip {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-family: var(--mono);
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 15;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 50% { opacity: 0.4; } }
+.bc-size { font-weight: 700; }
+.bc-track {
+  width: 64px;
+  height: 5px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.bc-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+.bc-pct { color: var(--muted); font-weight: 600; }
+/* Active players — live segment inside the chip, next to the board stats */
+.bc-active { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.bc-active b { font-family: var(--mono); font-weight: 700; color: var(--green); }
+.bc-active-label, .bc-active-online {
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+/* Short label — swapped in by the mobile media query when the chip is crowded */
+.bc-active-online { display: none; }
+/* Symbol inventory — right side of the chip */
+.bc-symbols { display: inline-flex; align-items: center; gap: 6px; }
+.bc-sep { width: 1px; height: 14px; background: var(--border-strong); }
+.bc-sym { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; line-height: 1; }
+.bc-sym b { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--gold); }
+/* Referral button — inside the chip, next to the symbols */
+.bc-refer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(124, 92, 255, 0.14);
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+}
+.bc-refer:hover { background: rgba(124, 92, 255, 0.28); transform: translateY(-1px); }
+.expand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 159, 67, 0.14);
+  border: 1px solid rgba(255, 159, 67, 0.4);
+  color: var(--orange);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow { 50% { box-shadow: 0 0 14px rgba(255, 159, 67, 0.45); } }
+
+/* Control dock — floating buttons bottom-right */
+.control-dock {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 18; /* above live-ticker (16) — so dock tooltips stay on top of the ticker */
+  transition: bottom 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.22s ease;
+}
+/* While the pixel sheet is in peek, the dock and FAB slide above the sheet (peek 238 + 10 gap).
+   The min() clamp prevents overflow past the stage on short screens. */
+.stage-wrap[data-sheet="peek"] .control-dock { bottom: min(248px, calc(100% - 152px)); }
+.stage-wrap[data-sheet="peek"] .lb-fab { bottom: min(248px, calc(100% - 56px)); }
+/* At half/full snap the sheet covers these controls — hide them */
+.stage-wrap[data-sheet="half"] .control-dock,
+.stage-wrap[data-sheet="half"] .lb-fab,
+.stage-wrap[data-sheet="half"] .live-ticker,
+.stage-wrap[data-sheet="full"] .control-dock,
+.stage-wrap[data-sheet="full"] .lb-fab,
+.stage-wrap[data-sheet="full"] .live-ticker {
+  opacity: 0;
+  pointer-events: none;
+}
+.dock-btn {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.15s;
+}
+.dock-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.dock-btn.on { color: var(--text); border-color: var(--accent); box-shadow: var(--glow-accent); }
+.dock-zap.on {
+  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  border-color: transparent;
+  color: #fff;
+}
+
+/* Leaderboard FAB (mobile) */
+.lb-fab {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-size: 19px;
+  box-shadow: var(--shadow);
+  z-index: 16;
+  transition: transform 0.12s;
+}
+.lb-fab:active { transform: scale(0.94); }
+.lb-fab { transition: transform 0.12s, bottom 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.22s ease; }
+
+/* ============ Explanation tooltips (data-tip) ============ */
+/* :where → zero specificity: doesn't override the position of absolute/fixed elements (lb-fab etc.),
+   only applies relative to static elements */
+:where([data-tip]) { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel-solid);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--sans);
+  padding: 6px 10px;
+  border-radius: 9px;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+/* Dock buttons: tooltip on the left — instead of vertical centering, the tooltip's bottom
+   edge aligns with the button's bottom edge (balances right-aligned buttons) */
+.tip-left[data-tip]::after {
+  top: auto;
+  bottom: 0;
+  left: auto;
+  right: calc(100% + 10px);
+  transform: none;
+}
+/* FAB: tooltip on top */
+.tip-top[data-tip]::after {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+/* FAB against the left edge: tooltip starts at the button's left (stays on screen) */
+.lb-fab[data-tip]::after { left: 0; transform: none; }
+@media (hover: hover) {
+  [data-tip]:hover::after { opacity: 1; }
+}
+/* Touch devices: a long press adds the JS .tip-on class (tooltipTouch.ts) */
+[data-tip].tip-on::after { opacity: 1; }
+
+/* Live feed ticker (mobile) — floats between the FAB and the control dock */
+.live-ticker {
+  position: absolute;
+  left: 66px;
+  right: 62px;
+  bottom: 12px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  text-align: left;
+  overflow: hidden;
+  z-index: 16;
+  transition: bottom 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.22s ease;
+}
+/* While the pixel sheet is in peek, the ticker slides above it */
+.stage-wrap[data-sheet="peek"] .live-ticker { bottom: min(248px, calc(100% - 52px)); }
+/* On very short screens (landscape phones, etc.) peek collides with the sheet — hide */
+@media (max-height: 520px) {
+  .stage-wrap[data-sheet="peek"] .control-dock,
+  .stage-wrap[data-sheet="peek"] .lb-fab,
+  .stage-wrap[data-sheet="peek"] .live-ticker {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+.lt-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  animation: lt-in 0.35s ease;
+}
+@keyframes lt-in {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.lt-icon { flex: 0 0 auto; font-size: 13px; }
+.lt-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lt-text b { color: var(--accent); font-weight: 700; }
+.lt-time {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+}
+
+/* ============ Floating panels (desktop) ============ */
+/* Left column: Leaderboard + Live Feed. The gap between panels clicks through to the canvas. */
+.left-stack {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 302px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 25;
+  pointer-events: none;
+}
+.left-stack > * { pointer-events: auto; }
+
+.lb-dock, .feed-dock {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Opaque, no backdrop-filter: these docks float over the live WebGL canvas, which
+     repaints 1×/s on decay + 30fps badge ticker. Any backdrop blur string must
+     re-blur the overlapped region whenever the canvas behind it redraws — and that
+     spikes at scroll in split view, starving the Pixi ticker of GPU budget. A solid
+     background composites instead, so scroll costs ~nothing. */
+  background: var(--panel-solid);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.lb-dock { flex: 3 1 0; transition: flex 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+.lb-dock.collapsed { flex: 0 0 auto; }
+.feed-dock { flex: 2 1 0; }
+
+.dock-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px 4px;
+}
+.dock-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lb-collapse {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  transition: color 0.15s;
+}
+.lb-collapse:hover { color: var(--text); }
+.lb-dock .leaderboard {
+  flex: 1;
+  min-height: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.feed-dock .feed-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 8px 10px;
+}
+.feed-dock .panel-empty { margin: 8px; }
+
+/* Thin visible scrollbar on desktop panels — overflowing content must look scrollable.
+   (macOS overlay scrollbars are hidden, so users couldn't tell.) */
+.lb-body, .feed-dock .feed-list {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 45%, transparent) transparent;
+}
+.lb-body::-webkit-scrollbar, .feed-dock .feed-list::-webkit-scrollbar { width: 7px; }
+.lb-body::-webkit-scrollbar-track, .feed-dock .feed-list::-webkit-scrollbar-track { background: transparent; }
+.lb-body::-webkit-scrollbar-thumb, .feed-dock .feed-list::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
+  border-radius: 8px;
+}
+.lb-body::-webkit-scrollbar-thumb:hover, .feed-dock .feed-list::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.pixel-dock {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 302px; /* same width as the left column (.left-stack) — symmetric look */
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  z-index: 26;
+  animation: dock-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes dock-in {
+  from { transform: translateX(28px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.pixel-dock .panel {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* ============ Bottom Sheet (mobile) ============ */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 7vh;
+  height: 93vh;
+  height: 93dvh; /* dynamic VH — fills the real visible area incl. browser toolbar */
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -16px 56px rgba(0, 0, 0, 0.45);
+  z-index: 60;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+[data-theme="light"] .sheet { box-shadow: 0 -16px 48px rgba(30, 30, 70, 0.22); }
+.sheet.dragging { transition: none; }
+
+.sheet-handle {
+  flex: 0 0 auto;
+  padding: 10px 0 8px;
+  cursor: grab;
+  touch-action: none;
+  display: grid;
+  place-items: center;
+}
+.sheet-handle:active { cursor: grabbing; }
+.sheet-grip {
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--muted);
+  opacity: 0.45;
+}
+
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 14px calc(18px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+/* In peek mode: details hidden, scroll off — the canvas stays interactive */
+.sheet[data-snap="peek"] .sheet-body { overflow: hidden; }
+.sheet[data-snap="peek"] .peek-hide { display: none; }
+/* In peek the content tightens: status + price + Buy button fit fully */
+.sheet[data-snap="peek"] .panel-head { margin-bottom: 8px; }
+.sheet[data-snap="peek"] .pi-statuses { margin-bottom: 8px; }
+.sheet[data-snap="peek"] .pi-total { margin-bottom: 8px; }
+/* In the sheet, detail rows form a 2-column card grid — no hover on mobile,
+   so all info stays compact and visible at half snap */
+.sheet .pi-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+/* Slim down the detail grid inside the sheet so the compact content stays inside the
+   viewport, with less vertical bulk — the wide Drop-Chance card is the only tall entry. */
+.sheet .sheet-body .pi-rows li { padding: 5px 8px; gap: 1px; }
+.sheet .sheet-body .pi-rows li > span:first-child { font-size: 9.5px; }
+.sheet .sheet-body .pi-rows li > span:last-child { font-size: 11px; }
+.sheet .pi-rows li,
+.sheet .pi-rows li:nth-child(odd) {
+  background: var(--panel-2);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 9px;
+}
+.sheet .pi-rows li.wide { grid-column: 1 / -1; }
+.sheet .pi-rows li > span:last-child { text-align: left; }
+/* Compact the sheet's own header chrome + drop-chance lines */
+.sheet .panel-head h3 { font-size: 13px; }
+.sheet .pi-status { font-size: 9.5px; padding: 4px 8px; }
+.sheet .pi-statuses { margin-bottom: 7px; }
+.sheet .pi-total { margin-bottom: 6px; }
+.sheet .nuke-prob { gap: 6px; }
+.sheet .prob-line { font-size: 10.5px; }
+
+.sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  z-index: 2;
+}
+/* Headed sheet: the close button sits inline in the title row, never overlapping content */
+.sheet-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px 10px;
+}
+.sheet-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.sheet-close.in-head { position: static; flex: 0 0 auto; }
+/* Inside the sheet, the panel's own close button is redundant — sheet-close is enough */
+.sheet .panel .panel-close { display: none; }
+.sheet .panel {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.sheet .leaderboard {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  height: 100%;
+}
+
+/* ============ Pixel Panel content ============ */
+.panel { padding: 14px; }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.panel-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.pi-coord { font-family: var(--mono); color: var(--accent); }
+.panel-close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  transition: color 0.15s;
+}
+.panel-close:hover { color: var(--text); }
+
+.panel-empty {
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px dashed var(--border-strong);
+  border-radius: 14px;
+}
+
+.pi-statuses { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.pi-status {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.pi-status.empty { color: var(--accent-2); border-color: rgba(0, 224, 184, 0.35); background: rgba(0, 224, 184, 0.08); }
+.pi-status.owned { color: var(--orange); border-color: rgba(255, 159, 67, 0.35); background: rgba(255, 159, 67, 0.08); }
+.pi-status.mine { color: var(--green); border-color: rgba(61, 220, 151, 0.35); background: rgba(61, 220, 151, 0.08); }
+.pi-status.gold { color: var(--gold); border-color: rgba(255, 209, 102, 0.4); background: rgba(255, 209, 102, 0.1); box-shadow: var(--glow-gold); }
+
+.pi-rows {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pi-rows li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+.pi-rows li:nth-child(odd) { background: var(--panel-2); }
+.pi-rows li > span:first-child { color: var(--muted); font-size: 11.5px; }
+.pi-rows li > span:last-child { font-weight: 600; font-family: var(--mono); font-size: 12px; text-align: right; }
+.pi-rows .mult { color: var(--accent); font-weight: 800; }
+.pi-rows .cooldown span:last-child { color: var(--orange); }
+.pi-rows .sub-usd { color: var(--muted); font-size: 10.5px; }
+.pi-rows .mono { font-size: 11.5px; }
+.nuke-prob { display: flex; gap: 8px; }
+.prob-line { white-space: nowrap; }
+.gain.profit .gain-fact { color: var(--green); }
+.gain.loss .gain-fact { color: var(--red); }
+
+.pi-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.14), rgba(255, 77, 141, 0.08));
+  border: 1px solid rgba(124, 92, 255, 0.3);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.pi-total-label { color: var(--muted); font-size: 12.5px; }
+.pi-total-vals { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.pi-total-vals strong { font-family: var(--mono); font-size: 17px; letter-spacing: -0.01em; }
+.pi-total-sol { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+.cta {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  transition: transform 0.12s, box-shadow 0.15s, opacity 0.15s;
+  box-shadow: var(--glow-accent);
+}
+.cta:hover:not(:disabled) { transform: translateY(-1px); }
+.cta:active:not(:disabled) { transform: scale(0.98); }
+.cta:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+.auto-hint {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  padding: 8px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+}
+.mine-hint { color: var(--green); border-color: rgba(61, 220, 151, 0.3); }
+
+.gold-unusable {
+  text-align: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255, 209, 102, 0.08);
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pi-pending {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: var(--accent-3);
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+}
+.pi-pending .auto-hint { flex-basis: 100%; margin-top: 4px; border: none; padding: 0; }
+.pi-pending-spinner {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2.5px solid rgba(34, 211, 238, 0.25);
+  border-top-color: var(--accent-3);
+  border-radius: 50%;
+  animation: pw-spin 0.8s linear infinite;
+  box-sizing: border-box;
+}
+@keyframes pw-spin { to { transform: rotate(360deg); } }
+
+/* ============ Leaderboard ============ */
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.lb-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px 0;
+  flex: 0 0 auto;
+}
+.lb-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 4px;
+  border-radius: 10px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.lb-tab.active {
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.lb-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  counter-reset: lb;
+}
+.lb-list li {
+  counter-increment: lb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  transition: background 0.12s;
+}
+.lb-list li:not(.empty):hover { background: var(--panel-2); }
+/* Rank number — top 3 gold/silver/bronze */
+.lb-list li:not(.empty)::before {
+  content: counter(lb);
+  width: 20px;
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.lb-list li:nth-child(1)::before { color: var(--gold); }
+.lb-list li:nth-child(2)::before { color: #c0c0d8; }
+.lb-list li:nth-child(3)::before { color: var(--orange); }
+.lb-owner { flex: 1; font-family: var(--mono); font-size: 11.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.lb-coord { font-family: var(--mono); font-size: 11.5px; font-weight: 700; color: var(--accent); }
+.lb-mult { font-family: var(--mono); font-size: 10.5px; color: var(--orange); font-weight: 700; }
+.lb-val { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--accent-2); font-weight: 600; white-space: nowrap; }
+.lb-list .empty {
+  padding: 20px;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.lb-list .empty::before { content: none; }
+
+.feed-list { display: flex; flex-direction: column; gap: 3px; }
+.feed-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  /* Feed rows below the fold are skipped entirely during scroll — they're painted
+     only as they enter the viewport. This is what removes the per-frame repaint of
+     newly-visible rows that stalled the long list during a fast scroll. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 42px;
+}
+@media (hover: hover) { .feed-item:hover { background: var(--panel-2); } }
+/* .hot uses an opaque fill so the row paint is a plain solid draw (no alpha blend
+   against the panel behind it), instead of re-blending on every scroll frame. */
+.feed-item.hot { background: var(--panel-hot); }
+.fi-icon { flex: 0 0 auto; font-size: 13px; }
+.fi-body { flex: 1; min-width: 0; color: var(--text); word-break: break-word; }
+.fi-body b { color: var(--accent); font-weight: 700; }
+.fi-mult { font-family: var(--mono); font-weight: 700; color: var(--muted); }
+.fi-hot { color: var(--orange); }
+.fi-time { flex: 0 0 auto; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+
+/* ============ Notifications ============ */
+.notif-stack {
+  position: fixed;
+  top: 158px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 80;
+  pointer-events: none;
+  max-width: min(92vw, 460px);
+}
+.bubble {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 10px 34px 10px 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  box-shadow: var(--shadow);
+  animation: bubble-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  max-width: 100%;
+}
+@keyframes bubble-in {
+  from { transform: translateY(-12px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.bubble-body b { color: var(--accent); }
+.bubble-x {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 2px 4px;
+}
+.bubble-x:hover { color: var(--text); }
+.bubble-hot { color: var(--orange); font-style: normal; font-weight: 800; font-family: var(--mono); }
+.bubble-sub { color: var(--muted); font-size: 11px; }
+.bubble.mine { border-color: var(--accent); box-shadow: var(--glow-accent); }
+.bubble-gold { border-color: rgba(255, 209, 102, 0.5); box-shadow: var(--glow-gold); }
+.bubble-gold .bubble-body b { color: var(--gold); }
+.bubble-nuke_drop, .bubble-missile_drop, .bubble-grenade_drop { border-color: rgba(255, 209, 102, 0.35); }
+/* Toast bubbles: colored border + tinted background by type */
+.bubble-toast { border-color: rgba(255, 93, 108, 0.45); background: color-mix(in srgb, var(--red) 9%, var(--panel)); }
+.bubble-toast.toast-ok { border-color: rgba(61, 220, 151, 0.45); background: color-mix(in srgb, var(--green) 9%, var(--panel)); }
+.bubble-toast.toast-warn { border-color: rgba(255, 159, 67, 0.45); background: color-mix(in srgb, var(--orange) 9%, var(--panel)); }
+.toast-ok { color: var(--green); }
+.toast-warn { color: var(--orange); }
+.toast-err { color: var(--red); }
+
+/* ============ Hover Tooltip (desktop) ============ */
+.hover-tooltip {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+  background: var(--panel-solid);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  box-shadow: var(--shadow);
+  max-width: 250px;
+  left: -9999px;
+  top: -9999px;
+  opacity: 0;
+  animation: tip-in 0.15s ease;
+}
+@keyframes tip-in { from { opacity: 0; transform: translateY(4px); } }
+.ht-title { font-weight: 700; font-size: 12px; margin-bottom: 5px; font-family: var(--mono); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.ht-gold { color: var(--gold); font-weight: 700; font-size: 10px; }
+.ht-mine { color: var(--green); font-weight: 700; font-size: 10px; }
+.ht-owned { color: var(--orange); font-weight: 700; font-size: 10px; }
+.ht-price { font-family: var(--mono); font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.ht-sol { color: var(--muted); font-size: 10.5px; font-weight: 500; }
+.ht-meta { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10.5px; padding: 2px 0; flex-wrap: wrap; }
+.ht-meta .mult { color: var(--accent); font-weight: 700; font-family: var(--mono); }
+.ht-probs { display: flex; gap: 7px; font-family: var(--mono); }
+.ht-gold-owner { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: var(--muted); }
+.ht-gold-owner .mono { color: var(--text); font-family: var(--mono); }
+.ht-gain { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--border); font-size: 11px; font-weight: 600; }
+.ht-gain.profit { color: var(--green); }
+.ht-gain.loss { color: var(--red); }
+
+/* ============ Mobile adaptations ============ */
+@media (max-width: 1150px) {
+  /* Tooltips on narrow screens: long text wraps, stays on screen */
+  [data-tip]::after { white-space: normal; width: max-content; max-width: 64vw; text-align: center; }
+  /* Dock button tooltips on the left slid under the live feed — moved above the button.
+     On right-aligned buttons a centered tooltip would overflow the screen;
+     the tooltip's right edge aligns with the button's right edge. */
+  .tip-left[data-tip]::after {
+    top: auto;
+    left: auto;
+    right: 0;
+    bottom: calc(100% + 8px);
+    transform: none;
+    text-align: right;
+  }
+  /* Symbol counters moved to the board chip — freed up header space, data preserved */
+  .topbar { height: 52px; padding: 0 8px; gap: 5px; }
+  .brand { min-width: 0; gap: 6px; flex: 0 1 auto; overflow: hidden; }
+  /* Name stays visible on mobile — compact size */
+  .brand-name { font-size: 12px; letter-spacing: 0.04em; white-space: nowrap; }
+  .brand-logo-img { width: 32px; height: 32px; }
+  /* Token address pill compact on mobile — the copyable field stays visible at every size */
+  .token-pill { padding: 4px 9px; gap: 5px; }
+  .token-pill .token-label { font-size: 9.5px; }
+  .token-pill code { font-size: 10px; }
+  .token-pill .pending-full { display: none; }
+  .token-pill .pending-short { display: inline; font-size: 10px; }
+  .per-px { padding-right: 0; }
+  .per-px-label { font-size: 8px; }
+  .per-px-val { font-size: 10.5px; white-space: nowrap; }
+  .per-px-sol { font-size: 8.5px; }
+
+  /* Jackpots: NO scroll — 3 cards side by side, all visible.
+     Vertical stack: name + amount (SOL), symbols,
+     full-width CLAIM button — taller, more readable cards. */
+  .jackpot-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    padding: 8px 10px;
+    overflow: visible;
+  }
+  .jackpot {
+    min-width: 0; padding: 10px 9px 9px; gap: 6px; border-radius: 14px;
+    flex-direction: column; align-items: stretch;
+  }
+  .jp-icon { display: none; }
+  .jp-main { width: 100%; gap: 4px; }
+  .jp-name { font-size: 9px; letter-spacing: 0.05em; }
+  .jp-amount { width: 100%; justify-content: space-between; }
+  .jp-sol { font-size: 14.5px; }
+  .jp-sol small { font-size: 9px; }
+  .jp-usd { font-size: 9.5px; }
+  .jp-cost { font-size: 10.5px; gap: 2px; }
+  .jp-claim { width: 100%; font-size: 9.5px; padding: 8px 6px; border-radius: 9px; }
+
+  .board-chip { top: 8px; font-size: 10.5px; padding: 5px 10px; }
+  .bc-track { width: 48px; }
+  /* Connected mobile chips also carry the symbol inventory + invite button — space is
+     scarce, so the active segment swaps to the short "Online" label. */
+  .board-chip.has-symbols .bc-active-label { display: none; }
+  .board-chip.has-symbols .bc-active-online { display: inline; }
+  .board-chip.has-symbols .bc-active { gap: 4px; }
+
+  .notif-stack { top: 168px; }
+
+  /* Hover tooltip off on mobile — no hover on touch */
+  .hover-tooltip { display: none; }
+}
+
+@media (max-width: 480px) {
+  .jp-sol { font-size: 13px; }
+  .jp-usd { font-size: 8.5px; }
+  .jp-cost { font-size: 9.5px; }
+  .jp-claim { font-size: 9px; padding: 7px 5px; }
+}
+
+/* Very narrow screens (≤380px): extra compact so the header fits */
+@media (max-width: 380px) {
+  .brand-name { font-size: 11px; }
+  .token-pill .token-label { display: none; } /* "CA" label hidden, address + copy icon remain */
+}
+
+/* ============ Desktop jackpot grid ============ */
+@media (min-width: 1151px) {
+  .jackpot-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 10px 14px;
+    gap: 10px;
+    overflow: visible;
+  }
+  .jackpot { min-width: 0; }
+}
